@@ -8,6 +8,19 @@ namespace Solutions
 {
     internal static class StringExtensions
     {
+        public static string[] StripAndTrim(this string str, char ch)
+        {
+            return StripAndTrim(str, new char[] { ch });
+        }
+
+        public static string[] StripAndTrim(this string str, char[] separators)
+        {
+            return str.Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                      .Select(x => x.Trim())
+                      .Where(x => !string.IsNullOrEmpty(x))
+                      .ToArray();
+        }
+
         public static string[] StripAlpha(this string[] strings)
         {
             List<string> output = new List<string>();
