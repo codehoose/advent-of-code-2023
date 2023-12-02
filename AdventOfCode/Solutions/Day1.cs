@@ -5,7 +5,18 @@ namespace Solutions
 {
     public class Day1 : BaseSolution
     {
-        private static string[] NAMES = new string[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+        private static Dictionary<string, string> NAMEMAP = new Dictionary<string, string>()
+        {
+            { "one", "o1e" },
+            {"two", "t2o" },
+            {"three", "t3e" },
+            {"four","f4r" },
+            {"five", "f5e" },
+            {"six", "s6x" },
+            {"seven", "s7n" },
+            {"eight", "e8t" },
+            {"nine", "n9e" }
+        };
 
         protected override void OnRun()
         {
@@ -42,20 +53,21 @@ namespace Solutions
             while (ContainsName(output))
             {
                 int lowestPos = output.Length;
-                int index = -1;
-                for (int i = 0; i < NAMES.Length; i++)
+                string key = string.Empty;
+                //for (int i = 0; i < NAMES.Length; i++)
+                foreach(string number in NAMEMAP.Keys)
                 {
-                    int pos = output.IndexOf(NAMES[i]);
+                    int pos = output.IndexOf(number);
                     if (pos > -1 && pos < lowestPos)
                     {
                         lowestPos = pos;
-                        index = i;
+                        key = number;
                     }
                 }
 
                 if (lowestPos < str.Length)
                 {
-                    output = output.Replace(NAMES[index], (index + 1).ToString());
+                    output = output.Replace(key, NAMEMAP[key]);
                 }
             }
 
@@ -64,7 +76,7 @@ namespace Solutions
 
         bool ContainsName(string str)
         {
-            foreach(var name in NAMES)
+            foreach(var name in NAMEMAP.Keys)
             {
                 if (str.Contains(name)) return true;
             }
