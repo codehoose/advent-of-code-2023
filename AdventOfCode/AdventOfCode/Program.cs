@@ -13,7 +13,8 @@ namespace AdventOfCode
         {
             Program program = new Program();
             program.Run(args);
-
+            Console.WriteLine("Press any key");
+            Console.ReadLine();
         }
 
         private void Run(string[] args)
