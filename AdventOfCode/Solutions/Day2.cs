@@ -6,6 +6,26 @@ namespace Solutions
     {
         protected override void OnRun()
         {
+            Solution2();
+        }
+
+        void Solution2()
+        {
+            List<Game> games = Deserialize(Args[0]);
+            Set required = new Set(12, 13, 14);
+            int total = 0;
+            foreach (var g in games)
+            {
+                var min = g.Minimum;
+                var power = min.Power;
+                total += power;
+            }
+
+            WriteLine($"Total: {total}");
+        }
+
+        void Solution1()
+        {
             List<Game> games = Deserialize(Args[0]);
             Set required = new Set(12, 13, 14);
             int total = 0;
@@ -48,6 +68,7 @@ namespace Solutions
                 Game gameActual = new Game(gameId);
                 gameActual.Sets.AddRange(setList);
                 games.Add(gameActual);
+
             }
 
             return games;
@@ -112,6 +133,22 @@ namespace Solutions
             } 
         }
 
+        public Set Minimum
+        {
+            get
+            {
+                int red = int.MinValue, green = int.MinValue, blue = int.MinValue;
+                foreach (var set in Sets)
+                {
+                    if (set.Red > red) red = set.Red;
+                    if (set.Green > green) green = set.Green;
+                    if (set.Blue > blue) blue = set.Blue;
+                }
+
+                return new Set(red, green, blue);
+            }
+        }
+
         public List<Set> Sets { get; private set; } = new List<Set>();
 
         internal Game(int id)
@@ -127,6 +164,8 @@ namespace Solutions
         public int Green { get; set; }
 
         public int Blue { get; set; }
+
+        public int Power => Red * Green * Blue;
 
         public Set(int red, int green, int blue)
         {
