@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,12 @@ namespace Solutions
     public class Day4 : BaseSolution
     {
         protected override void OnRun()
+        {
+            //Part1();
+            Part2();
+        }
+
+        void Part1()
         {
             int total = 0;
             Args[0].ReadAllLines()
@@ -20,6 +27,40 @@ namespace Solutions
                    });
 
             WriteLine($"Total: {total}");
+        }
+
+        void Part2()
+        {
+            List<Card> cards = Args[0].ReadAllLines()
+                                      .Select(line => Deserialize(line))
+                                      .ToList();
+            List<Card> winners = GetWinners(cards);
+            int total = cards.Sum(c => c.Winners); // top-level winners
+            do
+            {
+                total += winners.Sum(c => c.Winners);
+                winners = GetWinners(winners);
+            }
+            while (winners.Count >= 0);
+
+            WriteLine($"Total: {total}");
+        }
+
+        List<Card> GetWinners(List<Card> cards)
+        {
+            List<Card> winners = new List<Card>();
+            cards.ForEach(card =>
+            {
+                if (card.Winners > 0)
+                {
+                    for (int i = card.ID; i <= card.ID + card.Winners - 1; i++)
+                    {
+                        winners.Add(cards[i]);
+                    }
+                }
+            });
+
+            return winners;
         }
 
         Card Deserialize(string line)
@@ -41,9 +82,27 @@ namespace Solutions
 
     }
 
+    [DebuggerDisplay("{ID} - {Winners}")]
     internal class Card
     {
         public int ID { get; private set; }
+
+        public int Winners
+        {
+            get
+            {
+                int score = 0;
+                foreach (var num in Numbers)
+                {
+                    if (Winning.Contains(num))
+                    {
+                        score++;
+                    }
+                }
+
+                return score;
+            }
+        }
 
         public int Score
         {
