@@ -34,16 +34,26 @@ namespace Solutions
             List<Card> cards = Args[0].ReadAllLines()
                                       .Select(line => Deserialize(line))
                                       .ToList();
-            List<Card> winners = GetWinners(cards);
-            int total = cards.Sum(c => c.Winners); // top-level winners
-            do
-            {
-                total += winners.Sum(c => c.Winners);
-                winners = GetWinners(winners);
-            }
-            while (winners.Count >= 0);
 
+            cards.ForEach(card =>
+            {
+                ParseCard(cards, card);
+            });
+
+            int total = cards.Sum(c => c.Count);
             WriteLine($"Total: {total}");
+        }
+
+        void ParseCard(List<Card> cards, Card card)
+        {
+            if (card.Winners > 0)
+            {
+                for (int i = card.ID; i <= card.ID + card.Winners - 1; i++)
+                {
+                    cards[i].Count++;
+                    ParseCard(cards, cards[i]);
+                }
+            }
         }
 
         List<Card> GetWinners(List<Card> cards)
@@ -55,7 +65,7 @@ namespace Solutions
                 {
                     for (int i = card.ID; i <= card.ID + card.Winners - 1; i++)
                     {
-                        winners.Add(cards[i]);
+                        cards[i].Count++;
                     }
                 }
             });
@@ -82,10 +92,12 @@ namespace Solutions
 
     }
 
-    [DebuggerDisplay("{ID} - {Winners}")]
+    [DebuggerDisplay("{ID} - {Count}")]
     internal class Card
     {
         public int ID { get; private set; }
+
+        public int Count { get; set; } = 1;
 
         public int Winners
         {
