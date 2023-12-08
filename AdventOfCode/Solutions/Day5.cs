@@ -19,6 +19,68 @@ namespace Solutions
 
         protected override void OnRun()
         {
+            Solution2();
+        }
+
+        void Solution2()
+        {
+            string[] lines = "data\\day5\\input.txt".ReadAllLines();
+            Planting planting = new Planting(lines);
+            long[] values = planting.Seeds.ToArray();
+            long lowest = long.MaxValue;
+            long seed = 0;
+            long originalSeed = 0;
+
+            for (int i = 0; i < values.Length; i += 2)
+            {
+                long start = values[i];
+                long length = values[i + 1];
+
+                for (long j = start; j < start + length; j++)
+                {
+                    long percent = j / (start + length) * 100;
+                    Console.Write($"Seed Loop #{1 + i / 2},  %complete {percent}                \r");
+
+                    seed = j;
+                    long value = seed;
+                    foreach (var key in maps)
+                    {
+                        value = GetMappedValue(value, planting.Ranges[key]);
+                    }
+
+                    if (value < lowest)
+                    {
+                        lowest = value;
+                        originalSeed = seed;
+                    }
+                }
+            }
+
+            WriteLine($"{originalSeed} = {lowest}");
+        }
+
+        private long GetMappedValue(long seed, List<PlantRange> ranges)
+        {
+            var possibleRanges = ranges.FirstOrDefault(r => r.IsInRange(seed));
+            if (possibleRanges == null) return seed;
+            return possibleRanges.GetDestination(seed);
+        }
+
+        private static void GetMappedValues(Planting planting, List<Tuple<long, long>> mappings, string key, long seed)
+        {
+            var ranges = planting.Ranges[key].Where(r => r.IsInRange(seed)).ToArray();
+            if (ranges.Length != 1)
+            {
+                mappings.Add(new Tuple<long, long>(seed, seed));
+            }
+            else
+            {
+                mappings.Add(new Tuple<long, long>(seed, ranges[0].GetDestination(seed)));
+            }
+        }
+
+        void Solution1()
+        {
             string[] lines = "data\\day5\\input.txt".ReadAllLines();
             Planting planting = new Planting(lines);
 
