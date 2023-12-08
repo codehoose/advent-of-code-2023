@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Solutions
@@ -7,7 +8,29 @@ namespace Solutions
     {
         protected override void OnRun()
         {
-            Solution1(Args[0].ReadAllLines());
+            //Solution1(Args[0].ReadAllLines());
+            Solution2(Args[0].ReadAllLines());
+        }
+
+        void Solution2(string[] lines)
+        {
+            string[] numbers = lines.Select(x => x.Replace(" ", "").StripAndTrim(':')[1])
+                                    .ToArray();
+
+            long speed = long.Parse(numbers[0]);
+            long distance = long.Parse(numbers[1]);
+
+            long actual = 0;
+
+            for (int i = 0; i <= speed; i++)
+            {
+                if (i * (speed - i) > distance)
+                {
+                    actual++;
+                }
+            }
+
+            WriteLine($"{actual}"); 
         }
 
         void Solution1(string[] lines)
